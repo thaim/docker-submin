@@ -7,6 +7,7 @@ port="8010"
 docker run -it \
        --name sample_submin \
        -p "8010:80" \
-       -e "SUBMIN_HOSTNAME=${hostname}:${port}" \
+       -e "SUBMIN_HOSTNAME=${hostname}" \
+       -e "SUBMIN_EXTERNAL_PORT=${port}" \
        thaim/submin:${VERSION}
 
