@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -x
 
 # use command submin
 hostname="${SUBMIN_HOSTNAME:-submin.local}"
@@ -33,7 +33,9 @@ if [ ! -e ${data_dir} ]; then
     key=`echo "SELECT key FROM password_reset;" | sqlite3 ${data_dir}/conf/submin.db`
     echo "access http://${hostname}:${external_port}/submin/password/admin/${key} to reset password"
 
-    service apache2 restart
+else
+    echo "Submin is already configured in ${data_dir}/conf"
 fi
+service apache2 restart
 
 tail -f /var/log/apache2/access.log
