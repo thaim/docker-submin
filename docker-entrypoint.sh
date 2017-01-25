@@ -12,7 +12,16 @@ admin_mail="${SUBMIN_ADMIN_MAIL:-root@submin.local}"
 if [ ! -e ${data_dir} ]; then
     echo -e "svn\n${svn_repo}\n${hostname}:${external_port}\n\n\n" \
         | submin2-admin ${data_dir} initenv ${admin_mail} >/dev/null
-    chown www-data:www-data ${svn_repo}
+
+    if [ "$SUBMIN_SMTP_HOSTNAME" ]; then
+        submin2-admin /var/lib/submin config set smtp_hostname $SUBMIN_SMTP_HOSTNAME
+    fi
+
+    if [ "$SUBMIN_SMTP_PORT"]; then
+        submin2-admin /var/lib/submin config set smtp_port "$SUBMIN_SMTP_PORT"
+    fi
+
+    chown -R www-data:www-data ${svn_repo}
 
     submin2-admin ${data_dir} apacheconf create all >/dev/null 2>&1 || true
 
@@ -30,6 +39,8 @@ if [ ! -e ${data_dir} ]; then
     # disable git
     submin2-admin ${data_dir} config set vcs_plugins svn || true
 
+    find ${data_dir} -type d -exec chmod 755 {}\;
+
     key=`echo "SELECT key FROM password_reset;" | sqlite3 ${data_dir}/conf/submin.db`
     echo "access http://${hostname}:${external_port}/submin/password/admin/${key} to reset password"
 
@@ -38,4 +49,4 @@ else
 fi
 service apache2 restart
 
-tail -f /var/log/apache2/access.log
+tail -f /var/log/apache2/access.log /var/log/apache2/error.log

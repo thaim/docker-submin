@@ -1,0 +1,22 @@
+version: '2'
+services:
+    mail:
+        image: mailhog/mailhog
+        ports:
+        - 1080:8025
+    submin:
+        container_name: submin
+        build: .
+        image: thaim/submin:0.3
+        ports:
+        - 80:80
+        environment:
+        - SUBMIN_ADMIN_MAIL=root@localhost
+        - SUBMIN_HOSTNAME=127.0.0.1
+        - SUBMIN_SMTP_HOSTNAME=mail
+        - SUBMIN_SMTP_PORT=1025
+        volumes:
+        - /mnt/s3/moreinteractive/svn:/var/lib/svn-old
+        - /mnt/s3/moreinteractive/svn/repos:/var/lib/svn
+        links:
+        - mail
