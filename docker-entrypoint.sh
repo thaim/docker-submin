@@ -28,7 +28,7 @@ if [ ! -e ${data_dir} ]; then
     } >/dev/null 2>&1
 
     # disable git
-    submin2-admin /var/lib/submin config set vcs_plugins svn || true
+    submin2-admin ${data_dir} config set vcs_plugins svn || true
 
     key=`echo "SELECT key FROM password_reset;" | sqlite3 ${data_dir}/conf/submin.db`
     echo "access http://${hostname}:${external_port}/submin/password/admin/${key} to reset password"
