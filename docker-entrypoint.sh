@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -x
+set -x
 
 # use command submin
 hostname="${SUBMIN_HOSTNAME:-submin.local}"
@@ -17,11 +17,9 @@ if [ ! -e ${data_dir} ]; then
         submin2-admin /var/lib/submin config set smtp_hostname $SUBMIN_SMTP_HOSTNAME
     fi
 
-    if [ "$SUBMIN_SMTP_PORT"]; then
+    if [ "$SUBMIN_SMTP_PORT" ]; then
         submin2-admin /var/lib/submin config set smtp_port "$SUBMIN_SMTP_PORT"
     fi
-
-    chown -R www-data:www-data ${svn_repo}
 
     submin2-admin ${data_dir} apacheconf create all >/dev/null 2>&1 || true
 
@@ -38,8 +36,6 @@ if [ ! -e ${data_dir} ]; then
 
     # disable git
     submin2-admin ${data_dir} config set vcs_plugins svn || true
-
-    find ${data_dir} -type d -exec chmod 755 {}\;
 
     key=`echo "SELECT key FROM password_reset;" | sqlite3 ${data_dir}/conf/submin.db`
     echo "access http://${hostname}:${external_port}/submin/password/admin/${key} to reset password"

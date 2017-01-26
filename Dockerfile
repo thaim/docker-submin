@@ -25,6 +25,8 @@ RUN apt-get update \
 
 COPY ./docker-entrypoint.sh /
 
+RUN usermod -u 1000 www-data
+
 EXPOSE 80
 ENTRYPOINT ["/docker-entrypoint.sh"]
 #CMD ["submin"]
